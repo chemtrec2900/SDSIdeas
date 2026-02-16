@@ -1,0 +1,23 @@
+{
+  "name": "sds-solution",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Safety Document Management System",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "cd api && npm run dev",
+    "dev:web": "cd web && npm run dev",
+    "build": "cd api && npm run build && cd ../web && npm run build",
+    "lint": "cd api && npm run lint && cd ../web && npm run lint",
+    "db:generate": "cd api && npx prisma generate",
+    "db:migrate": "cd api && npx prisma migrate dev",
+    "db:push": "cd api && npx prisma db push"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "packageManager": "pnpm@9.14.2",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

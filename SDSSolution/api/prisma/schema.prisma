@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String?
+  displayName  String?
+  roles        String   // JSON array: ["Admin","DocumentEditor","Viewer"]
+  companyCode  String?
+  contactId    String?  // Dynamics 365 contact ID
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  companyCode String
+  filename    String
+  blobPath    String
+  productName String?
+  department  String?
+  site        String?
+  tags        String   @default("[]") // JSON array: ["tag1","tag2"]
+  fullText    String?  // Extracted text for full-text search
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("documents")
+}
