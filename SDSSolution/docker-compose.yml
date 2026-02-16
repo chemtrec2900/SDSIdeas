@@ -1,0 +1,39 @@
+# Docker Compose for local development and testing
+# Usage: docker-compose up --build
+#
+# For Azure production, deploy the single container image to
+# Azure Container Apps or App Service (see azure/README.md)
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      # Override with your values - use .env file or docker-compose.override.yml
+      DATABASE_URL: "file:./data/app.db"
+      WEB_URL: "http://localhost:8080"
+      # D365 (set in Azure or .env)
+      # D365_URL:
+      # D365_CLIENT_ID:
+      # D365_CLIENT_SECRET:
+      # D365_TENANT_ID:
+      # JWT_SECRET: change-me-in-production
+      DEV_SKIP_AUTH: "false"
+    volumes:
+      # Persist SQLite database
+      - app-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  app-data:

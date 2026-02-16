@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": { "value": "sds-solution" },
+    "location": { "value": "eastus" },
+    "image": { "value": "yourregistry.azurecr.io/sds-solution:latest" },
+    "acrLoginServer": { "value": "yourregistry.azurecr.io" },
+    "acrUsername": { "value": "yourregistry" },
+    "acrPassword": { "value": "your-acr-password" },
+    "envVars": {
+      "value": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "PORT", "value": "8080" },
+        { "name": "WEB_URL", "value": "https://your-app.azurecontainerapps.io" },
+        { "name": "DATABASE_URL", "value": "file:./data/app.db" },
+        { "name": "JWT_SECRET", "value": "CHANGE-ME-strong-secret" },
+        { "name": "DEV_SKIP_AUTH", "value": "false" }
+      ]
+    }
+  }
+}

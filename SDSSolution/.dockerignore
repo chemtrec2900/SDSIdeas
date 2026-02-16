@@ -1,0 +1,65 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+**/dist
+web/dist
+api/dist
+.next
+build
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs & debug
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Test
+coverage
+.nyc_output
+**/*.test.ts
+**/*.spec.ts
+**/__tests__
+**/__mocks__
+
+# Docker
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+.docker
+
+# Docs (optional - include if needed)
+# *.md
+# !README.md
+
+# Prisma dev
+api/prisma/dev.db
+api/prisma/*.db
+api/prisma/*.db-journal
+
+# Misc
+*.pem
+.env.local
+.env.development
+.env.test

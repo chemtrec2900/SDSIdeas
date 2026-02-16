@@ -46,7 +46,123 @@ SDSSolution/
 └── pnpm-workspace.yaml
 ```
 
-## Quick Start
+## Docker
+
+The app runs as a **single container** (API + React web) on port **8080**.
+
+### Prerequisites
+
+- Docker 20.10+
+- Docker Compose v2 (optional)
+
+### Build
+
+From the project root:
+
+```bash
+docker build -t sds-solution:latest .
+```
+
+### Run with `docker run`
+
+**Minimal (dev auth bypass):**
+
+```bash
+docker run -p 8080:8080 \
+  -e DATABASE_URL="file:./data/app.db" \
+  -e WEB_URL="http://localhost:8080" \
+  -e DEV_SKIP_AUTH=true \
+  -v sds-data:/app/data \
+  sds-solution:latest
+```
+
+**With Azure services (use `.env` or pass env vars):**
+
+```bash
+docker run -p 8080:8080 \
+  -e DATABASE_URL="file:./data/app.db" \
+  -e WEB_URL="http://localhost:8080" \
+  -e AZURE_STORAGE_CONNECTION_STRING="..." \
+  -e AZURE_SEARCH_ENDPOINT="..." \
+  -e AZURE_SEARCH_API_KEY="..." \
+  -e D365_URL="https://yourorg.crm.dynamics.com" \
+  -e D365_CLIENT_ID="..." \
+  -e D365_CLIENT_SECRET="..." \
+  -e D365_TENANT_ID="..." \
+  -e JWT_SECRET="your-strong-secret" \
+  -v sds-data:/app/data \
+  sds-solution:latest
+```
+
+**Using an env file:**
+
+```bash
+docker run -p 8080:8080 --env-file api/.env -v sds-data:/app/data sds-solution:latest
+```
+
+### Run with Docker Compose
+
+```bash
+# Build and start
+docker-compose up --build
+
+# Run in background
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
+
+# Stop
+docker-compose down
+```
+
+Open **http://localhost:8080**.
+
+### Docker options
+
+| Option | Description |
+|--------|-------------|
+| `-p 8080:8080` | Map container port 8080 to host |
+| `-v sds-data:/app/data` | Persist SQLite database |
+| `-e VAR=value` | Set environment variable |
+| `--env-file api/.env` | Load variables from file |
+
+### Environment variables (Docker)
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `PORT` | No | 8080 | Server port |
+| `NODE_ENV` | No | production | Set by Dockerfile |
+| `DATABASE_URL` | Yes | — | `file:./data/app.db` for SQLite |
+| `WEB_URL` | Yes (prod) | — | App URL (e.g. http://localhost:8080) |
+| `DEV_SKIP_AUTH` | No | false | Set `true` to bypass auth |
+| `JWT_SECRET` | Yes (prod) | — | JWT signing secret |
+| `D365_*` | Yes (auth) | — | Dynamics 365 config |
+| `AZURE_STORAGE_*` | Yes | — | Blob storage config |
+| `AZURE_SEARCH_*` | Yes | — | AI Search config |
+
+### Health check
+
+```bash
+curl http://localhost:8080/api/health
+```
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Port 8080 in use | Use `-p 8081:8080` and open http://localhost:8081 |
+| Database resets on restart | Add `-v sds-data:/app/data` to persist SQLite |
+| Login fails | Set D365 env vars and `DEV_SKIP_AUTH=false` |
+| Build fails | Ensure `api/` and `web/` exist and have `package.json` |
+
+### Azure deployment
+
+For Azure Container Apps, App Service, or CI/CD, see **[azure/README.md](azure/README.md)**.
+
+---
+
+## Quick Start (Development)
 
 ### Prerequisites
 
