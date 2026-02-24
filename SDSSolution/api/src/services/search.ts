@@ -10,7 +10,7 @@ function getClient(): SearchClient<SearchDocument> | null {
   return new SearchClient(endpoint, indexName, new AzureKeyCredential(apiKey));
 }
 
-interface SearchDocument {
+export interface SearchDocument {
   id: string;
   companyCode: string;
   filename: string;
@@ -54,9 +54,13 @@ export const searchService = {
     for await (const r of result.results) {
       if (r.document) items.push(r.document as SearchDocument);
     }
+    const scopedItems = opts.companyCode
+      ? items.filter((item) => String(item.companyCode ?? "") === String(opts.companyCode))
+      : items;
     return {
-      items,
-      total: result.count ?? 0,
+      // Defense-in-depth: never return documents outside the caller's company scope.
+      items: scopedItems,
+      total: opts.companyCode ? scopedItems.length : (result.count ?? 0),
       page: opts.page,
       limit: opts.limit,
     };

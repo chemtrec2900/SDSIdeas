@@ -10,10 +10,12 @@ export interface JwtPayload {
   contactId?: string;
   firstName?: string;
   lastName?: string;
+  accountName?: string;
+  accountNumber?: string;
 }
 
 export function signToken(payload: JwtPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN as string });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions);
 }
 
 export function verifyToken(token: string): JwtPayload {

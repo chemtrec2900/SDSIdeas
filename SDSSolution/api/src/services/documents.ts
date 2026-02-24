@@ -119,13 +119,13 @@ export const documentsService = {
       { header: "Tags", key: "tags", width: 30 },
     ];
     ws.addRows(docs.map((d) => ({ ...d, tags: (JSON.parse(d.tags ?? "[]") as string[]).join(", ") })));
-    const buffer = (await wb.xlsx.writeBuffer()) as Buffer;
-    return buffer;
+    const buf = await wb.xlsx.writeBuffer();
+    return Buffer.isBuffer(buf) ? buf : Buffer.from(buf);
   },
 
   async importFromExcel(buffer: Buffer) {
     const wb = new ExcelJS.Workbook();
-    await wb.xlsx.load(buffer);
+    await wb.xlsx.load(buffer as unknown as ArrayBuffer);
     const ws = wb.worksheets[0];
     if (!ws) throw new Error("No worksheet found");
     const rows = ws.getRows(2, ws.rowCount ?? 0) ?? [];

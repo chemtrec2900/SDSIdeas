@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   CardContent,
-  TextField,
   Typography,
   Alert,
   CircularProgress,
@@ -18,7 +17,6 @@ import { api } from '../services/api';
 
 export function BulkUploadPage() {
   const [files, setFiles] = useState<File[]>([]);
-  const [companyCode, setCompanyCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<{ uploaded: number; failed: number; errors: string[] } | null>(null);
@@ -40,7 +38,7 @@ export function BulkUploadPage() {
     setError('');
     setResult(null);
     try {
-      const res = await api.documents.bulkUpload(files, companyCode || 'default');
+      const res = await api.documents.bulkUpload(files);
       setResult(res);
       if (res.uploaded > 0) navigate('/documents');
     } catch (err) {
@@ -58,15 +56,6 @@ export function BulkUploadPage() {
       <Card elevation={0} variant="outlined">
         <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
           <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Company Code"
-              value={companyCode}
-              onChange={(e) => setCompanyCode(e.target.value)}
-              placeholder="e.g. ACME001"
-              required
-              sx={{ mb: 2 }}
-            />
             <Button
               variant="outlined"
               component="label"

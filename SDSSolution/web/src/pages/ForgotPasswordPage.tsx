@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Button, Card, CardContent, TextField, Typography, Alert } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
 export function ForgotPasswordPage() {
-  const { user, loading } = useAuth();
+  const { forgotPassword } = useAuth();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const { forgotPassword } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -9,6 +9,8 @@ export type AuthUser = {
   companyCode?: string;
   firstName?: string;
   lastName?: string;
+  accountName?: string;
+  accountNumber?: string;
 };
 
 declare global {

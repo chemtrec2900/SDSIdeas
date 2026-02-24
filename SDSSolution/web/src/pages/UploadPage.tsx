@@ -15,7 +15,6 @@ import { api } from '../services/api';
 
 export function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
-  const [companyCode, setCompanyCode] = useState('');
   const [productName, setProductName] = useState('');
   const [department, setDepartment] = useState('');
   const [site, setSite] = useState('');
@@ -34,7 +33,6 @@ export function UploadPage() {
     try {
       const fd = new FormData();
       fd.append('file', file);
-      fd.append('companyCode', companyCode || 'default');
       if (productName) fd.append('productName', productName);
       if (department) fd.append('department', department);
       if (site) fd.append('site', site);
@@ -65,14 +63,6 @@ export function UploadPage() {
               {file ? file.name : 'Choose file'}
               <input type="file" hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} required />
             </Button>
-            <TextField
-              fullWidth
-              label="Company Code"
-              value={companyCode}
-              onChange={(e) => setCompanyCode(e.target.value)}
-              placeholder="e.g. ACME001"
-              sx={{ mb: 2 }}
-            />
             <TextField
               fullWidth
               label="Product Name"

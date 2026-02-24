@@ -26,7 +26,6 @@ import { api, type Document } from '../services/api';
 
 export function DocumentsPage() {
   const [query, setQuery] = useState('');
-  const [companyCode, setCompanyCode] = useState('');
   const [department, setDepartment] = useState('');
   const [site, setSite] = useState('');
   const [page, setPage] = useState(1);
@@ -42,7 +41,6 @@ export function DocumentsPage() {
     try {
       const res = await api.documents.search({
         q: query || undefined,
-        companyCode: companyCode || undefined,
         department: department || undefined,
         site: site || undefined,
         page,
@@ -109,13 +107,6 @@ export function DocumentsPage() {
                 </InputAdornment>
               ),
             }}
-          />
-          <TextField
-            placeholder="Company"
-            value={companyCode}
-            onChange={(e) => setCompanyCode(e.target.value)}
-            size="small"
-            sx={{ minWidth: { xs: '100%', sm: 120 } }}
           />
           <TextField
             placeholder="Department"

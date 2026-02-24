@@ -7,12 +7,16 @@ interface User {
   roles: string[];
   firstName?: string;
   lastName?: string;
+  accountName?: string;
+  accountNumber?: string;
 }
 
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithMicrosoft: () => void;
+  loginWithToken: (token: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
@@ -45,6 +49,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const loginWithMicrosoft = () => {
+    window.location.assign(api.auth.microsoftStartUrl());
+  };
+
+  const loginWithToken = async (token: string) => {
+    setToken(token);
+    const u = await api.auth.me();
+    setUser(u);
+  };
+
   const register = async (email: string, password: string) => {
     const res = await api.auth.register(email, password);
     if (res.token) {
@@ -73,7 +87,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, forgotPassword, resetPassword, hasRole }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, loginWithMicrosoft, loginWithToken, register, logout, forgotPassword, resetPassword, hasRole }}
+    >
       {children}
     </AuthContext.Provider>
   );

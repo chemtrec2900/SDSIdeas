@@ -9,7 +9,7 @@ export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const { login, loginWithMicrosoft } = useAuth();
 
   useEffect(() => {
     if (!loading && user) navigate('/', { replace: true });
@@ -73,6 +73,9 @@ export function LoginPage() {
             )}
             <Button type="submit" variant="contained" fullWidth size="large" sx={{ mb: 2 }}>
               Sign in
+            </Button>
+            <Button type="button" variant="outlined" fullWidth size="large" sx={{ mb: 2 }} onClick={loginWithMicrosoft}>
+              Sign in with Microsoft
             </Button>
           </form>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>

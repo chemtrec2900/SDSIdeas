@@ -5,12 +5,14 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { AuthCallbackPage } from './pages/AuthCallbackPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { DocumentsPage } from './pages/DocumentsPage';
 import { UploadPage } from './pages/UploadPage';
 import { BulkUploadPage } from './pages/BulkUploadPage';
 import { ImportPage } from './pages/ImportPage';
 import { LabelsPage } from './pages/LabelsPage';
+import { ContactsPage } from './pages/ContactsPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -33,6 +35,7 @@ function AppRoutes() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
       <Route
         path="/"
         element={
@@ -47,6 +50,7 @@ function AppRoutes() {
         <Route path="bulk-upload" element={<BulkUploadPage />} />
         <Route path="import" element={<ImportPage />} />
         <Route path="labels" element={<LabelsPage />} />
+        <Route path="contacts" element={<ContactsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

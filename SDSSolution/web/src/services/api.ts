@@ -35,18 +35,19 @@ async function request<T>(path: string, opts?: RequestInit): Promise<T> {
 export const api = {
   health: () => request<{ status: string }>('/health'),
   auth: {
+    microsoftStartUrl: () => `${API_BASE}/auth/microsoft/start`,
     login: (email: string, password: string) =>
-      request<{ token: string; user: { id: string; email: string; roles: string[]; firstName?: string; lastName?: string } }>('/auth/login', {
+      request<{ token: string; user: { id: string; email: string; roles: string[]; firstName?: string; lastName?: string; accountName?: string; accountNumber?: string } }>('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }),
     register: (email: string, password: string) =>
-      request<{ token: string; user: { id: string; email: string; roles: string[]; firstName?: string; lastName?: string } }>('/auth/register', {
+      request<{ token: string; user: { id: string; email: string; roles: string[]; firstName?: string; lastName?: string; accountName?: string; accountNumber?: string } }>('/auth/register', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }),
     logout: () => request('/auth/logout', { method: 'POST' }),
-    me: () => request<{ id: string; email: string; roles: string[]; firstName?: string; lastName?: string }>('/auth/me'),
+    me: () => request<{ id: string; email: string; roles: string[]; firstName?: string; lastName?: string; accountName?: string; accountNumber?: string }>('/auth/me'),
     forgotPassword: (email: string) =>
       request<{ message: string }>('/auth/forgot-password', {
         method: 'POST',
@@ -59,10 +60,9 @@ export const api = {
       }),
   },
   documents: {
-    search: (params: { q?: string; companyCode?: string; department?: string; site?: string; page?: number; limit?: number }) => {
+    search: (params: { q?: string; department?: string; site?: string; page?: number; limit?: number }) => {
       const sp = new URLSearchParams();
       if (params.q) sp.set('q', params.q);
-      if (params.companyCode) sp.set('companyCode', params.companyCode);
       if (params.department) sp.set('department', params.department);
       if (params.site) sp.set('site', params.site);
       if (params.page) sp.set('page', String(params.page));
@@ -89,10 +89,9 @@ export const api = {
         }
         return res.json();
       }),
-    bulkUpload: (files: File[], companyCode: string) => {
+    bulkUpload: (files: File[]) => {
       const fd = new FormData();
       files.forEach((f) => fd.append('files', f));
-      fd.append('companyCode', companyCode);
       return fetch(`${API_BASE}/documents/bulk`, {
         method: 'POST',
         credentials: 'include',
@@ -152,6 +151,25 @@ export const api = {
       request<{ productName: string; companyCode: string; department?: string; site?: string; filename: string }>(
         `/documents/${id}/label`
       ),
+  },
+  users: {
+    list: () =>
+      request<{
+        contacts: {
+          contactId: string;
+          firstName: string;
+          lastName: string;
+          email: string;
+          roles: string[];
+          d365Roles: Record<string, boolean>;
+          account?: { name?: string; accountnumber?: string };
+        }[];
+      }>('/users'),
+    updateRoles: (contactId: string, d365Roles: Record<string, boolean>) =>
+      request<{ message: string }>(`/users/${contactId}/roles`, {
+        method: 'PATCH',
+        body: JSON.stringify({ d365Roles }),
+      }),
   },
 };
 

@@ -10,6 +10,8 @@ const DEV_USER = {
   companyCode: "DEV001",
   firstName: "Dev",
   lastName: "User",
+  accountName: "Dev Account",
+  accountNumber: "DEV001",
 };
 
 export function devAuth(req: Request, _res: Response, next: NextFunction): void {
@@ -25,6 +27,8 @@ export function devAuth(req: Request, _res: Response, next: NextFunction): void 
         roles: payload.roles,
         firstName: payload.firstName,
         lastName: payload.lastName,
+        accountName: payload.accountName,
+        accountNumber: payload.accountNumber,
       };
       return next();
     } catch {

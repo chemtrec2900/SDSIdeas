@@ -14,12 +14,16 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 
 documentsRouter.use(requireAuth);
 
 // GET /api/documents - search documents (metadata + full text)
+// Always filters by authenticated user's account number
 documentsRouter.get("/", async (req, res, next) => {
   try {
-    const { q, companyCode, department, site, page = 1, limit = 20 } = req.query;
+    const userAccountNumber = req.user?.accountNumber;
+    if (!userAccountNumber) return res.status(401).json({ error: "Account number not found in user context" });
+    
+    const { q, department, site, page = 1, limit = 20 } = req.query;
     const result = await documentsService.search({
       query: q as string,
-      companyCode: companyCode as string,
+      companyCode: userAccountNumber,
       department: department as string,
       site: site as string,
       page: Number(page),
@@ -64,13 +68,17 @@ documentsRouter.post("/:id/share", async (req, res, next) => {
 });
 
 // POST /api/documents - upload document (Edit role)
+// Always uses authenticated user's account number
 documentsRouter.post("/", requireRole("Admin", "DocumentEditor"), upload.single("file"), async (req, res, next) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-    const { companyCode, productName, department, site, tags } = req.body ?? {};
+    const userAccountNumber = req.user?.accountNumber;
+    if (!userAccountNumber) return res.status(401).json({ error: "Account number not found in user context" });
+    
+    const { productName, department, site, tags } = req.body ?? {};
     const doc = await documentsService.upload({
       file: req.file,
-      companyCode: companyCode ?? "default",
+      companyCode: userAccountNumber,
       productName,
       department,
       site,
@@ -83,11 +91,14 @@ documentsRouter.post("/", requireRole("Admin", "DocumentEditor"), upload.single(
 });
 
 // POST /api/documents/bulk - bulk upload (Admin)
+// Always uses authenticated user's account number
 documentsRouter.post("/bulk", requireRole("Admin"), upload.array("files", 100), async (req, res, next) => {
   try {
     const files = (req.files as Express.Multer.File[]) ?? [];
-    const { companyCode } = req.body ?? {};
-    const result = await documentsService.bulkUpload(files, companyCode ?? "default");
+    const userAccountNumber = req.user?.accountNumber;
+    if (!userAccountNumber) return res.status(401).json({ error: "Account number not found in user context" });
+    
+    const result = await documentsService.bulkUpload(files, userAccountNumber);
     res.status(201).json(result);
   } catch (e) {
     next(e);

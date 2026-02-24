@@ -1,4 +1,4 @@
-import { BlobServiceClient } from "@azure/storage-blob";
+import { BlobServiceClient, BlobSASPermissions } from "@azure/storage-blob";
 
 const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 const containerName = process.env.AZURE_STORAGE_CONTAINER ?? "safety-documents";
@@ -30,7 +30,7 @@ export const documentsStorageService = {
     const blob = container.getBlobClient(blobPath);
     const sas = await blob.generateSasUrl({
       expiresOn: new Date(Date.now() + expiresInMinutes * 60 * 1000),
-      permissions: "r",
+      permissions: BlobSASPermissions.parse("r"),
     });
     return sas;
   },
